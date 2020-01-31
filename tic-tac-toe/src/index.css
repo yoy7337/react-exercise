@@ -37,6 +37,10 @@ ul {
     outline: none;
 }
 
+.history:focus {
+    font-weight: bold;
+}
+
 .kbd-navigation .square:focus {
     background: #ddd;
 }
