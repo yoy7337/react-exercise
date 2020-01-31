@@ -37,31 +37,27 @@ function calculateWinner(squares) {
 class Board extends React.Component {
     renderSquare(i) {
         return <Square
+            key={i}
             value={this.props.squares[i]}
             onClick={() => this.props.onClick(i)}
         />;
     }
 
     render() {
+        let render = [];
+        for (let i = 0; i < 3; i++) {
+            const columns = [];
+            for (let j = 0; j < 3; j++) {
+                columns.push(this.renderSquare(i * 3 + j));
+            }
+            render.push(<div key={i} className="board-row"> {columns}</div>)
+        }
+
         return (
             <div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+                {render}
             </div>
-        );
+        )
     }
 }
 
@@ -115,7 +111,7 @@ class Game extends React.Component {
 
         const moves = history.map((step, move) => {
             const desc = move ?
-                `Go to move #${move}, position(${Math.floor(step.position/3)}, ${step.position%3}), player(${step.player})` :
+                `Go to move #${move}, position(${Math.floor(step.position / 3)}, ${step.position % 3}), player(${step.player})` :
                 'Go to game start'
             return (
                 <li key={move}>
