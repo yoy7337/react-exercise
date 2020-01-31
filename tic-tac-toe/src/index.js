@@ -5,7 +5,7 @@ import './index.css';
 function Square(props) {
     return (
         <button
-            className="square"
+            className={props.className}
             onClick={props.onClick}>
             {props.value}
         </button>
@@ -27,11 +27,11 @@ function calculateWinner(squares) {
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return squares[a];
+            return { winner: squares[a], winIndexes: [a, b, c] };
         }
     }
 
-    return null;
+    return { winner: null, winIndexes: null };
 }
 
 class Board extends React.Component {
@@ -40,6 +40,7 @@ class Board extends React.Component {
             key={i}
             value={this.props.squares[i]}
             onClick={() => this.props.onClick(i)}
+            className={(this.props.winIndexes && this.props.winIndexes.includes(i)) ? "squareWin" : "square"}
         />;
     }
 
@@ -82,7 +83,8 @@ class Game extends React.Component {
         const history = this.state.history.slice(0, this.state.stepNumber + 1)
         const current = history[history.length - 1]
         const squares = current.squares.slice();
-        if (calculateWinner(squares) || squares[i]) {
+        const { winner } = calculateWinner(squares);
+        if (winner || squares[i]) {
             return;
         }
 
@@ -114,7 +116,7 @@ class Game extends React.Component {
     render() {
         const history = this.state.history
         const current = history[this.state.stepNumber]
-        const winner = calculateWinner(current.squares)
+        const { winner, winIndexes } = calculateWinner(current.squares);
         const reverseMovesVal = this.state.reverseMovesVal
 
         const reverseMove = <button onClick={() => this.reverseMoves()}>{reverseMovesVal ? "Normal Moves order" : "Reverse"}</button>
@@ -147,6 +149,7 @@ class Game extends React.Component {
                 <div className="game-board">
                     <Board
                         squares={current.squares}
+                        winIndexes={winIndexes}
                         onClick={i => this.handleClick(i)}
                     />
                 </div>
