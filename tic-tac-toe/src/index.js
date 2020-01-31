@@ -27,11 +27,19 @@ function calculateWinner(squares) {
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return { winner: squares[a], winIndexes: [a, b, c] };
+            return { winner: squares[a], winIndexes: [a, b, c], tie: false };
         }
     }
 
-    return { winner: null, winIndexes: null };
+    let tie = true;
+    for (let i = 0; i < squares.length; i++) {
+        if (squares[i] === null) {
+            tie = false
+            break
+        }
+    }
+
+    return { winner: null, winIndexes: null, tie };
 }
 
 class Board extends React.Component {
@@ -116,7 +124,7 @@ class Game extends React.Component {
     render() {
         const history = this.state.history
         const current = history[this.state.stepNumber]
-        const { winner, winIndexes } = calculateWinner(current.squares);
+        const { winner, winIndexes, tie } = calculateWinner(current.squares);
         const reverseMovesVal = this.state.reverseMovesVal
 
         const reverseMove = <button onClick={() => this.reverseMoves()}>{reverseMovesVal ? "Normal Moves order" : "Reverse"}</button>
@@ -138,11 +146,12 @@ class Game extends React.Component {
 
         let status;
         if (winner) {
-            status = 'Winner is ' + winner
+            status = `Winner is ${winner}`
+        } else if (tie) {
+            status = 'It is a tie'
         } else {
-            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O')
+            status = `Next player:  ${this.state.xIsNext ? 'X' : 'O'}`
         }
-
 
         return (
             <div className="game">
